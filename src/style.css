@@ -1,5 +1,17 @@
-.bg {
-  width: 200px;
-  height: 600px;
-  background-color: #fff;
+.app {
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+.articles-container {
+  text-align: center;
+}
+.article {
+  font-family: sans-serif
 }
