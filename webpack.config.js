@@ -37,19 +37,14 @@ export default {
       },
     ]
   },
-  resolve: {
-    extensions: [
-      '*', '.jsx', '.js'
-    ]
-  },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
-      // filename: 'popup.html'
     }),
     new MiniCssExtractPlugin(),
     new webpack.ProvidePlugin({
-      "React": "react",
+      React: "react",
+      process: 'process/browser'
     }),
   ]
 }

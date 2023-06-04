@@ -1,6 +1,3 @@
-.app {
-}
-
 .main {
   display: flex;
   flex-direction: column;
@@ -20,7 +17,7 @@
   white-space: normal;
 }
 .summary-box {
-  width: 30%;
-  height: 20%;
+  width: 30vw;
+  height: 10vh;
   background-color: #999;
 }
