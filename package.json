@@ -6,8 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "webpack serve --config ./webpack.config.js",
-    "build": "webpack --config webpack.config.js",
-    "dev": "webpack --watch --config webpack.dev.js"
+    "build": "webpack --config webpack.config.js"
   },
   "keywords": [],
   "author": "",
