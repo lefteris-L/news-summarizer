@@ -2,7 +2,6 @@ import { Configuration, OpenAIApi } from 'openai'
 import axios from 'axios'
 import './style.css'
 import { useEffect, useState } from 'react';
-import 'dotenv/config'
 
 const App = () => {
   const [articles, setArticles] = useState([])
