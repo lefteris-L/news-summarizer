@@ -2,7 +2,7 @@ import { Configuration, OpenAIApi } from 'openai'
 import axios from 'axios'
 import './style.css'
 import { useEffect, useState } from 'react';
-// require('dotenv/config')
+import 'dotenv/config'
 
 const App = () => {
   const [articles, setArticles] = useState([])
@@ -17,13 +17,13 @@ const App = () => {
       autoCorrect: 'true'
     },
     headers: {
-      'X-RapidAPI-Key': '1bb9d75e86msh1971cb81e7ddfabp1f1591jsn250df1fe5e6f',
+      'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'contextualwebsearch-websearch-v1.p.rapidapi.com'
     }
   };
 
   // const config = new Configuration({
-  //   apiKey: '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'
+  //   apiKey: process.env.OPENAI_API_KEY
   // })
 
   // delete config.baseOptions.headers['User-Agent']
