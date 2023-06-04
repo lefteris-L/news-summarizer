@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 const App = () => {
   const [articles, setArticles] = useState([])
   const [query, setQuery] = useState('')
+
   const options = {
     method: 'GET',
     url: 'https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/WebSearchAPI',
@@ -46,14 +47,19 @@ const App = () => {
     try {
       const response = await axios.request({...options, params: {...options.params, q}})
       console.log(response);
-      setArticles(response.data.value.map(item => ({title: item.title, id: item.id})))
+      setArticles(response.data.value.map(article => ({...article, show: false})))
     } catch (error) {
       console.error(error);
     }
   }
 
   const handleSubmit = (e) => {
-    e.key === 'Enter' && getArticle(query)
+    e.key === 'Enter' && getArticle(query) && setQuery('')
+  }
+
+  const toggleArticle = id => {
+    const current = articles.find(article => id === article.id)
+    current.show = !current.show
   }
 
   // const getArticle = async (method, methods, choice = null) => {
@@ -79,7 +85,12 @@ const App = () => {
       <input onKeyUp={handleSubmit} onChange={e => setQuery(e.target.value)} type="text" className="input" value={query} placeholder="What to search for" />
       <div className="app">
         <div className="articles-container">
-          {articles.map(({title, id}) => <h1 className='article' key={id}>{title}</h1>)}
+          {articles.map(article => (
+            <h1 className='article' key={article.id}>
+              <div onClick={() => toggleArticle(article.id)}>{article.title}</div>
+              {article.show && <div className="summary-box">{article.body}</div>}
+            </h1>
+          ))}
         </div>
       </div>
     </main>
