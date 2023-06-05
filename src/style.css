@@ -2,20 +2,43 @@ html {
   font-family: sans-serif;
 }
 .app {
-  width: 30vw;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+@media (min-width: 480px) {
+  .app {
+    width: 75%;
+  }
+}
+
 .main {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  width: 100vw;
+  height: 100vh;
+}
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
-  height: 100%;
+  margin-bottom: 10px;
+}
+.button {
+  position: absolute;
+  right: 10px;
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  transform: rotateZ(-90deg);
 }
 .input {
   width: 100%;
   padding: 10px;
-  margin-bottom: 10px;
   border-radius: 8px;
   outline: none;
   box-shadow: none;
@@ -31,6 +54,7 @@ html {
   margin: 0;
   margin-bottom: 5px;
   transition: color 0.3s;
+  width: 100%;
 }
 .article-header:hover {
   cursor: pointer;
@@ -42,6 +66,10 @@ html {
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 10px 0 10px;
+}
+.article-container:not(:last-child) {
+  border-bottom: #4fa94d 1px solid;
 }
 @keyframes open {
   from {

@@ -2,10 +2,15 @@ import { Configuration, OpenAIApi } from 'openai'
 import axios from 'axios'
 import './style.css'
 import { useEffect, useState } from 'react';
+import { ThreeDots } from 'react-loader-spinner';
+import clsx from 'clsx';
 
 const App = () => {
   const [articles, setArticles] = useState([])
+  const [activeArticles, setActive] = useState([])
   const [query, setQuery] = useState('')
+  const [isLoading, setLoading] = useState(false)
+  const [loader, setLoader] = useState('')
 
   const options = {
     method: 'GET',
@@ -13,84 +18,106 @@ const App = () => {
     params: {
       pageNumber: '1',
       pageSize: '10',
-      autoCorrect: 'true'
     },
     headers: {
-      'X-RapidAPI-Key': import.meta.env.X_RAPIDAPI_KEY,
+      'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'contextualwebsearch-websearch-v1.p.rapidapi.com'
     }
   };
 
-  // const config = new Configuration({
-  //   apiKey: import.meta.env.OPENAI_API_KEY
-  // })
+  const config = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY
+  })
 
   // delete config.baseOptions.headers['User-Agent']
-  // const openai = new OpenAIApi(config);
-  // const methods = {}
+  const openai = new OpenAIApi(config);
 
-  // const getList = async list => {
-  //   try {
-  //     const response = await axios.request({...options, url: `${options.url}/list-${list}`})
-  //     methods[list] = response.data.payload
-  //   } catch (error) {
-  //     alert(error);
-  //   }
-  //   const optionsArr = methods[list].map((item, i) => new Option(item, i))
-  //   document.getElementById(list).append([new Option('1', 1), new Option('2', 2)])
-  // }
-  // if (!methods.publishers) getList('publishers')
-  // if (!methods.exchanges) getList('exchanges')
-
-  const getArticle = async q => {
+  const getArticles = async q => {
     try {
-      const response = await axios.request({...options, params: {...options.params, q}})
-      console.log(response);
-      setArticles(response.data.value.map(article => ({...article, show: false})))
+      setLoading(true)
+      const {data} = await axios.request({...options, params: {...options.params, q}})
+      const filtered = data.value.filter((article, i, arr) => arr.findIndex(({id}) => id === article.id) === i)
+      const updated = filtered.map((article, index) => ({...article, index, summation: ''}))
+      setArticles(updated)
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleSubmit = (e) => {
-    e.key === 'Enter' && getArticle(query) && setQuery('')
+  const summarizeArticle = async article => {
+    try {
+      setLoader(article.id)
+      const completion = await openai.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: [{role: 'user', content: `summarize this in 2 paragraphs: ${articles[article.index].url}`}]
+      })
+      article.summation = completion.data.choices[0].message.content
+      setActive(current => [...current, article.id])
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoader('')
+    }
   }
 
-  const toggleArticle = id => {
-    const current = articles.find(article => id === article.id)
-    current.show = !current.show
+  const handleSubmit = e => {
+    e.preventDefault()
+    getArticles(query)
+    setQuery('')
   }
 
-  // const getArticle = async (method, methods, choice = null) => {
-  //   const articleContainer = document.getElementById('article')
-  //   let article = {}
+  const handleClick = article => {
+    if (article.summation) {
+      setActive(current => current.includes(article.id)
+      ? current.filter(id => id !== article.id)
+      : [...current, article.id]
+      )
+    }
+    else if (loader) return
+    else summarizeArticle(article)
+  }
 
-  //   try {
-  //     article = await axios.get(`/articles-by-${method}/${methods[method][choice]}`)
-      
-  //     const completion = await openai.createChatCompletion({
-  //       model: 'gpt-3.5-turbo',
-  //       messages: [{role: 'user', content: `summarize this article in 2 paragraphs ${all.link}`}]
-  //     })
-    
-  //     const summary = completion.data.choices[0].message.content
-  //     articleContainer.innerHTML = summary
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
   return (
     <main className="main">
-      <input onKeyUp={handleSubmit} onChange={e => setQuery(e.target.value)} type="text" className="input" value={query} placeholder="What to search for" />
       <div className="app">
-        <div className="articles-container">
-          {articles.map(article => (
-            <h1 className='article' key={article.id}>
-              <div onClick={() => toggleArticle(article.id)}>{article.title}</div>
-              {article.show && <div className="summary-box">{article.body}</div>}
-            </h1>
-          ))}
-        </div>
+        <form onSubmit={handleSubmit} className="input-container">
+          <input
+            name='query'
+            autoComplete='on'
+            onChange={e => setQuery(e.target.value)}
+            type="text"
+            className="input"
+            value={query}
+            placeholder="What to search for"
+          />
+          <button className='button' type='submit'>
+            &#x1F50E;&#xFE0E;
+          </button>
+        </form>
+        <ThreeDots ariaLabel="three-dots-loading" color="#4fa94d" visible={isLoading} />
+        {!isLoading && articles.map(article => {
+          const shouldOpen = activeArticles.includes(article.id)
+          const date = article.datePublished.slice(0, 10).split('-').reverse().join('.')
+          const styles = {
+            transform: `scaleY(${Number(shouldOpen)})`,
+            display: shouldOpen ? 'inline' : 'none'
+          }
+
+          return (
+            <div className='article-container' key={article.id}>
+              <h1 onClick={() => handleClick(article)} className='article-header'>
+                {article.title}
+              </h1>
+              <ThreeDots ariaLabel="three-dots-loading" color="#4fa94d" visible={loader === article.id} width='50' height='50'/>
+              {loader !== article.id && <article className={clsx("summary-box", shouldOpen ? 'open' : 'close')} style={styles}>
+                {article.summation}
+              </article>}
+              {date[0] != 0 && <p className='date'>Date published: {date}</p>}
+            </div>
+          )
+        })}
       </div>
     </main>
   )
