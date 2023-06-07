@@ -24,7 +24,7 @@ const App = () => {
       'X-RapidAPI-Host': 'contextualwebsearch-websearch-v1.p.rapidapi.com'
     }
   };
-
+console.log(options.headers);
   const config = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
   })
@@ -71,8 +71,8 @@ const App = () => {
   const handleClick = article => {
     if (article.summation) {
       setActive(current => current.includes(article.id)
-      ? current.filter(id => id !== article.id)
-      : [...current, article.id]
+        ? current.filter(id => id !== article.id)
+        : [...current, article.id]
       )
     }
     else if (loader) return
