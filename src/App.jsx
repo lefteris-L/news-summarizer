@@ -20,13 +20,13 @@ const App = () => {
       pageSize: '10',
     },
     headers: {
-      'X-RapidAPI-Key': process.env.X_RAPIDAPI_KEY,
+      'X-RapidAPI-Key': import.meta.env.X_RAPIDAPI_KEY,
       'X-RapidAPI-Host': 'contextualwebsearch-websearch-v1.p.rapidapi.com'
     }
   };
 console.log(options.headers);
   const config = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY
+    apiKey: import.meta.env.OPENAI_API_KEY
   })
 
   // delete config.baseOptions.headers['User-Agent']
