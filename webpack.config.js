@@ -47,6 +47,8 @@ export default {
       React: "react",
       process: 'process/browser'
     }),
-    new Dotenv()
+    new Dotenv({
+      systemvars: true
+    })
   ]
 }
