@@ -7,7 +7,7 @@ const Articles = ({articles}) => {
   const [activeArticles, setActive] = useState([])
   const [loader, setLoader] = useState('')
   const config = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY
+    apiKey: process.env.REACT_APP_OPENAI_API_KEY
   })
 
   // delete config.baseOptions.headers['User-Agent']
