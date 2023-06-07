@@ -3,6 +3,7 @@ import webpack from 'webpack'
 import { fileURLToPath } from 'url';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import Dotenv from 'dotenv-webpack';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default {
@@ -46,5 +47,6 @@ export default {
       React: "react",
       process: 'process/browser'
     }),
+    new Dotenv()
   ]
 }
