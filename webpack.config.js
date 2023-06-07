@@ -47,8 +47,6 @@ export default {
       React: "react",
       process: 'process/browser'
     }),
-    new Dotenv({
-      prefix: 'import.meta.env.'
-    })
+    new Dotenv()
   ]
 }
